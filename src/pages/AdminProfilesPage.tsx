@@ -1,0 +1,16 @@
+import { useState } from 'react';
+import { videos } from '@/data/videos';
+import { AdminShell } from '@/pages/AdminDashboardPage';
+
+export function AdminProfilesPage() {
+  const [query, setQuery] = useState('');
+  const [status, setStatus] = useState('All');
+  const profiles = videos.filter((profile) => profile.name.toLowerCase().includes(query.toLowerCase()) && (status === 'All' || (status === 'Online' ? profile.online : !profile.online)));
+  return <AdminShell activeRoute="admin-profiles" title="Profiles" badge={`${videos.length} LISTED`}>
+    <div className="mx-auto max-w-7xl space-y-6 p-6 lg:p-8">
+      <div className="flex flex-col justify-between gap-4 md:flex-row md:items-end"><div><p className="text-sm text-on-surface-variant">Review and manage public companion profiles.</p><h1 className="mt-2 font-display text-3xl text-on-surface">Profile Directory</h1></div><button className="flex items-center gap-2 self-start rounded-lg bg-primary-container px-4 py-2 text-sm font-bold text-white hover:shadow-lg hover:shadow-primary-container/20"><span className="material-symbols-outlined text-base">add</span>Add Profile</button></div>
+      <div className="flex flex-col gap-3 rounded-2xl bg-surface-container p-4 sm:flex-row"><div className="flex flex-1 items-center gap-2 rounded-lg bg-surface-container-lowest px-3"><span className="material-symbols-outlined text-sm text-on-surface-variant">search</span><input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search profiles..." className="w-full border-none bg-transparent py-2 text-sm text-on-surface outline-none placeholder:text-on-surface-variant/50" /></div><div className="flex gap-2">{['All', 'Online', 'Offline'].map((item) => <button key={item} onClick={() => setStatus(item)} className={'rounded-full px-4 py-2 text-xs font-bold ' + (status === item ? 'bg-secondary text-on-secondary' : 'bg-surface-container-high text-on-surface-variant')}>{item}</button>)}</div></div>
+      <div className="grid grid-cols-2 gap-4 md:grid-cols-3 xl:grid-cols-4">{profiles.map((profile) => <article key={profile.id} className="group overflow-hidden rounded-2xl bg-surface-container transition-transform hover:-translate-y-1"><div className="relative aspect-[3/4] overflow-hidden"><img src={profile.thumbnail} alt={profile.name} className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" /><div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/80 to-transparent" />{profile.online && <span className="absolute right-3 top-3 rounded-full bg-green-500/20 px-2 py-1 text-[10px] font-bold text-green-300">ONLINE</span>}<div className="absolute inset-x-0 bottom-0 p-4"><h2 className="font-display text-xl text-white">{profile.name}</h2><p className="mt-1 text-xs uppercase tracking-widest text-white/70">{profile.city}</p></div></div><div className="flex items-center justify-between p-4"><span className="text-xs text-on-surface-variant">{profile.views} profile views</span><button className="text-secondary"><span className="material-symbols-outlined">more_horiz</span></button></div></article>)}</div>{profiles.length === 0 && <div className="rounded-2xl bg-surface-container p-12 text-center text-on-surface-variant">No profiles match your search.</div>}
+    </div>
+  </AdminShell>;
+}
